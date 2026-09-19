@@ -1,4 +1,4 @@
-import { defaultArticleState, type ArticleStateType } from '@/constants/articleProps';
+import { defaultArticleState } from '@/constants/articleProps';
 import { clsx } from 'clsx';
 import { useState, type CSSProperties } from 'react';
 
@@ -24,7 +24,7 @@ export const App = (): React.JSX.Element => {
         } as CSSProperties
       }
     >
-      <ArticleParamsForm onApply={(state: ArticleStateType) => setArticleState(state)} />
+      <ArticleParamsForm onApply={setArticleState} />
       <Article />
     </main>
   );

@@ -27,16 +27,16 @@ export const ArticleParamsForm = ({
   onApply,
 }: ArticleParamsFormProps): React.JSX.Element => {
   /* Настройки открытия/закрытия меню */
-  const [isOpen, setIsOpen] = useState(false);
-  const rootRef = useRef<HTMLDivElement | null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const sidebarContainerRef = useRef<HTMLDivElement | null>(null);
 
   useOutsideClickClose({
-    isOpen,
-    rootRef,
-    onChange: setIsOpen,
+    isOpen: isSidebarOpen,
+    rootRef: sidebarContainerRef,
+    onChange: setIsSidebarOpen,
   });
   const handleToggle = (): void => {
-    setIsOpen((prev) => !prev);
+    setIsSidebarOpen((prev) => !prev);
   };
 
   const [formState, setFormState] = useState(defaultArticleState);
@@ -49,12 +49,17 @@ export const ArticleParamsForm = ({
     onApply(defaultArticleState);
   };
 
+  const handleFieldChange =
+    <K extends keyof ArticleStateType>(field: K) =>
+    (value: ArticleStateType[K]): void =>
+      setFormState((prev) => ({ ...prev, [field]: value }));
+
   return (
-    <div ref={rootRef}>
-      <ArrowButton isOpen={isOpen} onClick={handleToggle} />
+    <div ref={sidebarContainerRef}>
+      <ArrowButton isOpen={isSidebarOpen} onClick={handleToggle} />
       <aside
         className={clsx(styles.container, {
-          [styles.container_open]: isOpen,
+          [styles.container_open]: isSidebarOpen,
         })}
       >
         <form className={styles.form} onSubmit={handleSubmit}>
@@ -66,18 +71,14 @@ export const ArticleParamsForm = ({
               options={fontFamilyOptions}
               selected={formState.fontFamilyOption}
               placeholder={fontFamilyOptions[0].title}
-              onChange={(option) => {
-                setFormState({ ...formState, fontFamilyOption: option });
-              }}
+              onChange={handleFieldChange('fontFamilyOption')}
               title="Шрифт"
             />
             <RadioGroup
               name="font-size"
               options={fontSizeOptions}
               selected={formState.fontSizeOption}
-              onChange={(option) => {
-                setFormState({ ...formState, fontSizeOption: option });
-              }}
+              onChange={handleFieldChange('fontSizeOption')}
               title="Размер шрифта"
             />
 
@@ -85,9 +86,7 @@ export const ArticleParamsForm = ({
               options={fontColors}
               selected={formState.fontColor}
               placeholder={fontColors[0].title}
-              onChange={(option) => {
-                setFormState({ ...formState, fontColor: option });
-              }}
+              onChange={handleFieldChange('fontColor')}
               title="Цвет шрифта"
             />
             <Separator />
@@ -95,18 +94,14 @@ export const ArticleParamsForm = ({
               options={backgroundColors}
               selected={formState.backgroundColor}
               placeholder={backgroundColors[0].title}
-              onChange={(option) => {
-                setFormState({ ...formState, backgroundColor: option });
-              }}
+              onChange={handleFieldChange('backgroundColor')}
               title="Цвет фона"
             />
             <Select
               options={contentWidthArr}
               selected={formState.contentWidth}
               placeholder={contentWidthArr[0].title}
-              onChange={(option) => {
-                setFormState({ ...formState, contentWidth: option });
-              }}
+              onChange={handleFieldChange('contentWidth')}
               title="Ширина контента"
             />
           </div>
